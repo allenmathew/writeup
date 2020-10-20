@@ -62,6 +62,7 @@ This was the first flag I claimed. It was on the desktop.
 
 ### Java
 We have a `.class` file. The flag is most probablly hidden in the class file. If it is in plain text then `strings` should show us the flag else we may need to decompile the code and see if the flag is b64 encoded or something like that. Luckily for me it was available in plain text. So `strings` gave out the flag.
+
 ![java](./img/java.png)
 
 ### Authentication
