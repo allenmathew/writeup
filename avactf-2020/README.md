@@ -218,7 +218,7 @@ There was a python code injection which I managed to get the flag for as well
 
 **Injection Ray** was fun!
 
-![system]./img/injection-ray.png)
+![system](./img/injection-ray.png)
 
 Because of the Ray's devious sense of *fun* I was curious to see the code. So I got the source by passing in this payload
 
@@ -321,7 +321,7 @@ All this for nothing.
 I relied on `dirb` for employees api. Once I found the `/help` endpoint I tried creating some users.
 But the flags were at the `employees/id` and `employees/position` end points. There was also an `/admin?id=` endpoint but I wasn't able to get anywhere with that. I wasn't able to figure out **Employees 3**
 
-![employees](./employees.png)
+![employees](./img/employees.png)
 
 ### Splunk
 Ok! this was hard. I had never used splunk before. I sort of knew what it did but had no first hand experience with it. My chances of getting these flags were slim. I reached out to my friend Sriram. He gave me a crash course on Splunk and some resources to learn the concepts. It appeared that Splunk exposed a REST endpoint on 8089. The default credentials `admin/changeme` did not work (obviously!) but sort of had an inking that the username was `admin`, so that was something. I figured we needed to guess the password.
