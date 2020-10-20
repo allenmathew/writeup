@@ -105,7 +105,7 @@ There was still one flag **System 8** that was left. I was not able to figure ou
 ![system](./img/system-hints.png)
 
 I saw some hints around `dockersvc` but it could have just been a decoy or I missed something very obvious.
-I also saw that root login was enabled, but I want able to crack the root login. Eitherway, I wasn't able to claim **System 8**
+I also saw that root login was enabled, but I wan't able to crack the root login. Eitherway, I wasn't able to claim **System 8**
 
 ### Library
 Again, I ran `curl 10.105.242.183` to get started. The code was taking in a `title` parameter which represented the file name and was returning the contents of that file. I thought the flag could be in the files, so I downloaded all the texts and grep'd for flags. No luck!
@@ -130,12 +130,17 @@ I tried a couple of options to crack the hash with `john the ripper` but in the 
 
 ### Crypto
 **Crypto 1** looked like shift encoding. I tried `rot13` and I lucked out. If I had'nt then I would have had to go about trying to figure out what the shift was. Luckily I did'nt have to. Got the flag `synt{rapbqvat_vf_abg_rapelcgvba_ohg_bu_jryy} = flag{encoding_is_not_encryption_but_oh_well}`
+
 **Crypto 2** was base64 encoded twice. The `=` sign was my clue, I figured it could be base64. I was able to claim that flag as well `flag{double_the_base64_double_the_fun}`
+
 **Crypto 3** looked like hex. Converting it back to string gave the flag `flag{what_do_the_numbers_mean?}`
+
 **Crypto 4** I did not know, so I figured it was either binary encoding, with `A=1/0, B=1/0` or it was something else. I searched for a block of the cipher text and `bacon` cipher showed up. I gave it a go and `FLAG{DONT_FORGET_THE_UNDERSCORES_AND_CURLY_BRACES}`
+
 **Crypto 5** I could not figure this out. It looked like I needed to guess the 7byte key, and maybe even the IV. I don't know. I need to learn this!
-**Crypto 6** I used stegsolve to get the layer with the symbols visible. I needed to know what the font was, so I figured a google reverse image search should take me to the page where these esoteric fonts are defined. But no, everytime I uploaded as section of the font, google would take me to some page defining circles, arcs and tangents. I don't know for sure, but I think at some point some over enthusiastic engineer at google said, *hey you know what! I can train a model that can take an image and tell you what it is, then you can use that information to run a text search for that description. It will be so cool, we will change the world!* Anyways, that sucked. So I tried doing some programmy things, 
-like I knew the the image had to say flag{xxxx_xx_xxxx} so I could map the symbols for f/l/a/g then get the english dictionary and search for words that start with *a* don't have *l* all that jazz, I tried that but still was left with a whole bunch of combinations. I could try all combinations, but that was taking too much time.
+
+**Crypto 6** I used stegsolve to get the layer with the symbols visible. I needed to know what the font was, so I figured a google reverse image search should take me to the page where these esoteric fonts are defined. But no, everytime I uploaded as section of the font, google would take me to some page defining circles, arcs and tangents. I don't know for sure, but I think at some point some over enthusiastic engineer at google said, *hey you know what! I can train a model that can take an image and tell you what it is, then you can use that information to run a text search for that description. It will be so cool, we will change the world!* Anyways, that sucked. So I tried doing some programmy things, like I knew the the image had to say flag{xxxx_xx_xxxx} so I could map the symbols for f/l/a/g then get the english dictionary and search for words that start with *a* don't have *l* all that jazz, I tried that but still was left with a whole bunch of combinations. I could try all combinations, but that was taking too much time.
+
 Snooping time, I looked up Ray and Steve on linked in, and went to their blogs. Yes I know, it is creepy. Long story short, I found the glyphs here https://medium.com/@stevemyrick/bsides-rdu-2019-eversec-ctf-writeup-4d2f5bfb8661.
 
 ### AWS
