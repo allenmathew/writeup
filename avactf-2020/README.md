@@ -69,37 +69,60 @@ We have a `.class` file. The flag is most probablly hidden in the class file. If
 For every IP which had 80/443 open, I would run `curl` to see what it gave back. In this case `10.105.242.218` gave back a page which mentioned it was auth. `curl -v "http://10.105.242.218"` does not show anything special in the headers.
 I made a post to `curl -v "http://10.105.242.218/auth_admin.php"` but that returned `302` a flag and a page `admin_main.php`. Maybe the page is looking for url parameters, so I sent a POST but with `username` and `password` in the query. Yay! another flag. The first two flags were quick, but the **Auth 3** flag took me a while to figure out. I sent a whole bunch of incorrect username/password combinations, but everytime I would getback `unable to read ./ passwords.txt`. I wasnt able to figure this out, so I moved on to other challenges and came back to this latter. I tried `nikto` and it showed me that `passwords.txt` was accessiable. Final flag!
 ![Auth](./img/auth-1.png)
+
 ![Auth](./img/auth-2.png)
+
 ![Auth](./img/auth-3.png)
+
 It wasn't all breezy, I failed more often than I succeeded.
 ![Auth](./img/failed_attempts.png)
 
 ### System
 Running `curl 10.105.243.138` gave the apache index page. So I ran `dirb "http://10.105.243.138"` to see if any common paths were accessiable. We got a `admin` directory with `index.html` and `robots.txt`. 
+
 ![system](./img/system-start.png)
+
 Both of them yeilded flags and ssh credentials to login to the machine.
+
 ![system](./img/system-1.png)
+
 ![system](./img/system-2.png)
+
 Lets try ssh into the machine, it worked. I tried moving around and trying to see what was visible. It was by accident that I found the `.bash_history`, that gave me two more flags.
+
 ![system](./img/system-3.png)
+
 `sudo -l` showed that `ctfuser` was allowed to run `/usr/bin/find` and `/usr/bin/nmap` but both files seemed unusually large.
-![system]./img/system-check-files.png)
+
+![system](./img/system-check-files.png)
+
 So I copied them over to  the kali box and ran strings on them
+
 ![system](./img/system-4.png)
+
 There was still one flag **System 8** that was left. I was not able to figure out what it was. It is 300 points so it is unlikely to be more difficult that the previous flags.
+
 ![system](./img/system-hints.png)
+
 I saw some hints around `dockersvc` but it could have just been a decoy or I missed something very obvious.
 I also saw that root login was enabled, but I want able to crack the root login. Eitherway, I wasn't able to claim **System 8**
 
 ### Library
 Again, I ran `curl 10.105.242.183` to get started. The code was taking in a `title` parameter which represented the file name and was returning the contents of that file. I thought the flag could be in the files, so I downloaded all the texts and grep'd for flags. No luck!
-![system]./img/library-fails.png)
+
+![system](./img/library-fails.png)
+
 I wanted to see if the code was constructing a command and executing it on a shell. So I tried this.
-![system]./img/lib-whoami.png)
+
+![system](./img/lib-whoami.png)
+
 Looks like the command is being constructed from the input. `title=example.txt|pwd` gave us `/var/www/html` so we needed to back up three levels.
-![system]./img/lib-dirlisting.png)
+
+![system](./img/lib-dirlisting.png)
+
 Then we can cat the flags
-![system]./img/lib-flags.png)
+
+![system](./img/lib-flags.png)
 
 ### Zip
 I tried a couple of options to crack the hash with `john the ripper` but in the end, I just uploaded the zip to an online zip cracking site, it gave me the password in a couple of seconds. I used that and unziped the file to claim the flag
