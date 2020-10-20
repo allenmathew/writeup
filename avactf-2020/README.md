@@ -199,7 +199,7 @@ I was able to get SQL injection on `.210`
 
 Injection 2 was printing the value of `<name>` back on screen so, we can define a malicious DTD which will do the filesystem look up and put the value inside the `<name>` element.
 
-Injection 3 was a similar vulenerability with on catch, there was no value being echoed back to the client. The page simply said "registration successful". For this I needed to trigger an out-of-band execution. I don't have much experience with Burp Suite, but I believe that there is a way in which burp suite can help with OOB. Anyways, I did not try burp suite.
+Injection 3 was a similar vulenerability with a catch, there was no value being echoed back to the client. The page simply said "registration successful". For this I needed to trigger an out-of-band execution. I don't have much experience with Burp Suite, but I believe that there is a way in which burp suite can help with OOB. Anyways, I did not try burp suite.
 I host my wife's we page. So I crafted this dtd and hosted it there
 
 ![system](./img/file-dtd.png)
