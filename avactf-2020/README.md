@@ -1,6 +1,6 @@
 # Avalara CTF 2020
 CTF summary for team 1nd1x. These are the flags we captured and how we went about getting them.
-Post registration we were given access to a kali instance and the link to the score board. Post registration, we were able to view the challenges. I guess the CTF organizers did not want us to go empty handed so we had a flag on the desktop!
+Post registration we were given access to a kali instance and the link to the score board. We needed to register on the score board. After that we were able to view the challenges. I guess the CTF organizers did not want us to go empty handed so we had a flag on the desktop!
 
 ## First things first
 RDP into the kali machine is slow. We don't need access to the machine's GUI. So ssh with tunnels to get to the dashboard saved us a lot of time interms of latency. My base machine is a windows laptop, my go to tool over the years has been putty. I set up a tunnel to ```10.105.243.185:8000```. With access to the dashboard sorted out, I claimed the first flag. yay!
