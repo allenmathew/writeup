@@ -153,15 +153,15 @@ Snooping time, I looked up Ray and Steve on linked in, and went to their blogs. 
 I scanned the public buckets with the given prefix. I found a public bucket.
 I used the SSRF url to get to the bucket, I could have just used curl as well.
 
-![system]./img/aws-1.png)
+![system](./img/aws-1.png)
 
 user data is listed on this url from aws `http://169.254.169.254/latest/user-data` so the SSRF page should be able to get us the user data
 
-![system]./img/aws-2.png)
+![system](./img/aws-2.png)
 
 **AWS 3** needed some trial and error, so I downloaded the script locally and tried a bunch of combinations and was able to come up with this
 
-![system]./img/aws-3.png)
+![system](./img/aws-3.png)
 
 it uses the bytes.fromhex to slip through the html escaping.
 
