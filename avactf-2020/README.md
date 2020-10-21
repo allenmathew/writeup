@@ -61,16 +61,22 @@ Most of the tools were already available in kali, i needed to install strace and
 This was the first flag I claimed. It was on the desktop.
 
 ### Java
-We have a `.class` file. The flag is most probablly hidden in the class file. If it is in plain text then `strings` should show us the flag else we may need to decompile the code and see if the flag is b64 encoded or something like that. Luckily for me it was available in plain text. So `strings` gave out the flag.
+We have a `.class` file. The flag is most probablly hidden in the class file. If it is in plain text then `strings` should show us the flag else we may need to decompile the code and see if the flag is obfuscated or something like that. Luckily for me it was available in plain text. So `strings` gave out the flag.
 
 ![java](./img/java.png)
 
 ### Authentication
 For every IP which had 80/443 open, I would run `curl` to see what it gave back. In this case `10.105.242.218` gave back a page which mentioned it was auth. `curl -v "http://10.105.242.218"` does not show anything special in the headers.
-I made a post to `curl -v "http://10.105.242.218/auth_admin.php"` but that returned `302` a flag and a page `admin_main.php`. Maybe the page is looking for url parameters, so I sent a POST but with `username` and `password` in the query. Yay! another flag. The first two flags were quick, but the **Auth 3** flag took me a while to figure out. I sent a whole bunch of incorrect username/password combinations, but everytime I would getback `unable to read ./ passwords.txt`. I wasnt able to figure this out, so I moved on to other challenges and came back to this latter. I tried `nikto` and it showed me that `passwords.txt` was accessiable. Final flag!
+
+I made a post to `curl -v "http://10.105.242.218/auth_admin.php"` but that returned `302` a flag and a page `admin_main.php`. Maybe the page is looking for url parameters, so I sent a POST but with `username` and `password` in the query. Yay! another flag. 
+
 ![Auth](./img/auth-1.png)
 
 ![Auth](./img/auth-2.png)
+
+The first two flags were quick, but the **Auth 3** flag took me a while to figure out. I sent a whole bunch of incorrect username/password combinations, but everytime I would getback `unable to read ./ passwords.txt`. I wasnt able to figure this out, so I moved on to other challenges and came back to this latter. 
+
+I came back to **Auth 3** a couple of days latter and tried `nikto`, it showed me that `passwords.txt` was accessiable. Final flag!
 
 ![Auth](./img/auth-3.png)
 
