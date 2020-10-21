@@ -94,7 +94,7 @@ Both of them yeilded flags and ssh credentials to login to the machine.
 
 ![system](./img/system-2.png)
 
-Lets try ssh into the machine, it worked. I tried moving around and trying to see what was visible. It was by accident that I found the `.bash_history`, that gave me two more flags.
+Lets ssh into the machine, it worked. I tried moving around and trying to see what was visible. It was by accident that I found the `.bash_history`, that gave me two more flags.
 
 ![system](./img/system-3.png)
 
@@ -243,7 +243,7 @@ $__________________='X19sYW1iZGE=';
         $___();$__________($______($__($_))); $________=$____();                                                                                                                                                   $________;
 ```
 
-As if that wasn't enough, the contents of the above code itself contained another block of gziped b64 encoded text. The function calls themselves were b64 encoded, but essentially the code was gunziping the b64 encoded content and then executing it.
+As if that wasn't enough, the contents of the above code itself contained another block of gziped b64 encoded text. The function call names themselves were b64 encoded, but essentially the code was gunziping the b64 encoded content and then executing it.
 So I gunziped the content and decoded it to be greeted with this! God dammit Ray!
 
 ```
@@ -334,7 +334,7 @@ Ok! this was hard. I had never used splunk before. I sort of knew what it did bu
 
 ![splunk](./img/splunk-1.png)
 
-I ran it and it against the 100k-most-used-passwords-NCSC.txt and got a hit for `admin/admin123`. I logged in, but no flag. I reached out to Steve (pestered him in the middle of the night) he asked me if I had claimed the flag on login. I had not. Steve bounced the machine and there it was! on the notifications list. 
+I ran it and it against the 100k-most-used-passwords-NCSC.txt and got a hit for `admin/admin123`. I logged in, but no flag. I reached out to Steve (*pestered him in the middle of the night*) he asked me if I had claimed the flag on login. I had not. Steve bounced the machine and there it was! on the notifications list. 
 Yay! my first flag. I fiddled around the UI a bit but could not make heads or tails. Time to study!
 
 There was big red notification hint on the login page of Splunk. It linked to a page which spoke about RCE. I knew that was what was needed.
@@ -372,18 +372,20 @@ I did not think I was going to be claiming the splunk flags! I guess I got lucky
 ### Random
 This challenge took me 3 days to figure out that I was wrong all along.
 The API was simple, there was a `/random` endpoint. You claimed a flag if you guessed the next random number ranging from 0 to 1000.
-The API was in python so I figured that the implementation was a **"Mersenne Twister"** and that the challenge was to guess the state of the random object so that we can predict the next. Boy was I wrong!
+The API was in python so I figured that the implementation was a **"Mersenne Twister"** and that the challenge was to guess the state of the random object so that we can predict the next. From there on it was a downward spiral. It took me a few days to realize why what I was trying to do would not work.
 
-First off, I had been overcomplicating this. But in the end I learnt about "Mersenne Twister", internal random state. I spoke to Steve about the challenge to ask him if I was going down a rabbit hole. He said I was overcomplicating it. :) tru dat!
+I had been overcomplicating this. But in the end I learnt about "Mersenne Twister", internal random state. I spoke to Steve about the challenge to ask him if I was going down a rabbit hole. He said I was overcomplicating it. tru dat!
 
-Once I was able to wind back, I thought in terms of, what are the chances of two random number generators generating the same number between 0 and 1000. So if I tried enought number of times I was bound to get a collision. So then I came up with this.
+Once I was able to wind back, I thought in terms of, what are the chances of two random number generators generating the same number between 0 and 1000? So if I tried enought number of times I was bound to get a collision. So then I came up with this.
 
 ![random](./img/random.png)
 
 ## Wrapup
-In the end I was able to claim most of the flags. The CTF also showed me areas where I needed to strengthen my understanding on. The flags I wasn't able to claim were
+This CTF showed me areas where I needed to deepen my understanding. Speaking to other contestants about approaches they used showed me blindspots and biases I had when I approached problems. Overall it was a learning experience!
+
+The flags I wasn't able to claim were
 - **Crypto 5**
 - **System 8**
 - **Employees 3**
 
-Parting thoughts. Reading the write-up can make it seem like I was claiming flags like pacman. But nothing can be further from the truth. I was able to get from 0 to 12000 points in 3days, but 12000 to 14500 took me 10 days. While I had fun in the event, it more importantly, served as a grim reminder to sheer size of the attack surface for our applications.
+Parting thoughts. Reading the write-up can make it seem like I was claiming flags like pacman gobbling dots. But nothing can be further from the truth. To offer some context in terms of time, I was able to get from 0 to 12000 points in 3days, but 12000 to 14500 took me ~8 days. While I had fun in the event, it more importantly, served as a grim reminder to sheer area of the attack surface our applications are exposed to. Events like this remind us of the dangers of treating application security as an afterthought.
